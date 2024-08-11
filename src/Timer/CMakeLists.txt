@@ -1,0 +1,1 @@
+add_library(timer_manager OBJECT Timer.cpp TimerManager.cpp)

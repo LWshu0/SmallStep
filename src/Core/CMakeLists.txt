@@ -1,0 +1,1 @@
+add_library(clock OBJECT Clock.cpp)
