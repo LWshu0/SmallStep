@@ -1,4 +1,4 @@
-#include "Timer/Timer.h"
+#include "Timer.h"
 
 Timer::Timer() :
     m_callback(nullptr),

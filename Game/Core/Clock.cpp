@@ -1,4 +1,4 @@
-#include "Core/Clock.h"
+#include "Clock.h"
 
 Clock::Clock() :
     m_configTimeFactor(1.0),
