@@ -1,17 +1,25 @@
-#include "BST/BST.h"
+#include "Tree/BST.hpp"
+#include "Tree/AVL.hpp"
+
+#include "Tree/TreeView.hpp"
 
 int main()
 {
     srand(time(NULL));
-    int insertCount = 100;
+    int insertCount = 10;
     int valueMax = 100;
 
     std::vector<int> v;
     for (int i = 0;i < insertCount;i++) v.push_back(rand() % valueMax);
 
-    BST bst;
-
-    for (int i = 0;i < insertCount;i++) bst.insertNode(v[i]);
+    AVL<int> bst;
+    TreeView treeview;
+    
+    for (int i = 0;i < insertCount;i++)
+    {
+        bst.insertNode(v[i]);
+    }
+    treeview(bst.root(), 3);
 
     std::cout << "new node count: " << bst.getCount() << std::endl;
 
@@ -29,8 +37,12 @@ int main()
     for (int i = 0;i < insertCount;i++)
     {
         bst.removeNode(v[i]);
+        treeview(bst.root(), 3);
     }
 
     if (nullptr != bst.findNode(-1)) std::cout << "error: find " << -1 << std::endl;
     if (nullptr != bst.findNode(valueMax)) std::cout << "error: find " << valueMax << std::endl;
+
+    // std::cout << "height: " << bst.root()->getHeight() << std::endl;
+    
 }
