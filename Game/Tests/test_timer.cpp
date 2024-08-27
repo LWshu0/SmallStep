@@ -15,12 +15,9 @@ int main()
     Timer* timer2 = new Timer();
     Timer* timer3 = new Timer();
 
-    timer1->setCallback(std::bind(callBack, "callback 1"));
-    timer2->setCallback(std::bind(callBack, "callback 2"));
-    timer3->setCallback(std::bind(callBack, "callback 3"));
-    timer1->setTimeout(Clock::instance().getTime(), 6000);
-    timer2->setTimeout(Clock::instance().getTime(), 5000, 2);
-    timer3->setTimeout(Clock::instance().getTime(), 3000, 3);
+    timer1->setCallback(std::bind(callBack, "callback 1")).setInterval(6000);
+    timer2->setCallback(std::bind(callBack, "callback 2")).setInterval(5000).setRepeat(2);
+    timer3->setCallback(std::bind(callBack, "callback 3")).setInterval(3000).setRepeat(3);
     TimerManager::instance().addTimer(timer1);
     TimerManager::instance().addTimer(timer2);
     TimerManager::instance().addTimer(timer3);
@@ -28,7 +25,7 @@ int main()
     while (!TimerManager::instance().empty())
     {
         Clock::instance().updateTime();
-        TimerManager::instance().update(Clock::instance().getTime());
+        TimerManager::instance().update();
     }
 
 }

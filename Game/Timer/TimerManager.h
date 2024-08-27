@@ -18,19 +18,19 @@ public:
         return m_timerManager;
     }
 
-    void addTimer(Timer* timer)
-    {
-        assert(timer != nullptr);
-        if (timer->isFinish()) return;
-        m_timers.push(timer);
-    }
+    /**
+     *@brief 将 Timer 交由 TimerManager 管理, 添加后 TimerManager 将调用 Timer 的 start 函数启动定时器
+     *       Timer 内存的释放也将由 TimerManager 进行
+     * @param timer 定时器
+     */
+    void addTimer(Timer* timer);
 
     bool empty()
     {
         return m_timers.empty();
     }
 
-    void update(uint64_t now_ms);
+    void update();
 
     ~TimerManager();
 
