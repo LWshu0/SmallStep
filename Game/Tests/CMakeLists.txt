@@ -3,3 +3,5 @@ target_link_libraries(test_timer PUBLIC clock timer_manager)
 
 add_executable(test_threadpool test_threadPool.cpp)
 target_link_libraries(test_threadpool PUBLIC thread_pool)
+
+add_executable(test_objectPool test_objectPool.cpp)
