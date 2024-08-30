@@ -1,5 +1,6 @@
 #include "Tree/BST.hpp"
 #include "Tree/AVL.hpp"
+#include "Tree/rbTree.hpp"
 
 #include "Tree/TreeView.hpp"
 
@@ -12,15 +13,16 @@ int main()
     std::vector<int> v;
     for (int i = 0;i < insertCount;i++) v.push_back(rand() % valueMax);
 
-    AVL<int> bst;
-    TreeView treeview;
+    rbTree bst;
+    rbTreeView treeview;
     
     for (int i = 0;i < insertCount;i++)
     {
+        std::cout << "insert " << v[i] << std::endl;
         bst.insertNode(v[i]);
+        treeview(bst.root(), 3);
     }
-    treeview(bst.root(), 3);
-
+    
     std::cout << "new node count: " << bst.getCount() << std::endl;
 
     if (bst.checkSortTree()) std::cout << "check sort correct" << std::endl;
@@ -36,6 +38,7 @@ int main()
 
     for (int i = 0;i < insertCount;i++)
     {
+        std::cout << "remove " << v[i] << std::endl;
         bst.removeNode(v[i]);
         treeview(bst.root(), 3);
     }
