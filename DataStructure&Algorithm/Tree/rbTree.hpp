@@ -7,6 +7,7 @@
 #include <queue>
 #include "TreeNode.hpp"
 
+template<typename T>
 class rbTree {
 public:
     class rbTreeException : protected std::exception {
@@ -20,7 +21,7 @@ public:
     };
 
 private:
-    using NodeType = rbTreeNode;
+    using NodeType = rbTreeNode<T>;
     NodeType* m_root;
 
     int nodeCount;  // 检查内存泄漏
@@ -30,7 +31,7 @@ public:
     inline int getCount() { return nodeCount; }
     inline NodeType* root() { return m_root; }
 
-    NodeType* findNode(int value)
+    NodeType* findNode(T value)
     {
         NodeType* search_ptr = m_root;
         while (search_ptr)
@@ -42,7 +43,7 @@ public:
         return nullptr;
     }
 
-    void insertNode(int value)
+    void insertNode(T value)
     {
         /*
             case 红黑树为空
@@ -135,48 +136,26 @@ public:
             // 叔节点为黑色
             if (nullptr == uncle_ptr || uncle_ptr->isBlack())
             {
-                rbTreeNode::Direction parent_dire = parent_ptr->direction();
-                rbTreeNode::Direction dire = new_node->direction();
-                // 父节点是祖父节点的左子树
-                if (rbTreeNode::Direction::LEFT == parent_dire)
+                switch (parent_ptr->direction())
                 {
-                    // 如果当前节点是父节点的右子树
-                    // 左旋以父节点为根的子树, 即 parent_ptr
-                    if (rbTreeNode::Direction::RIGHT == dire)
-                    {
-                        rotateLeft(parent_ptr);
-                        new_node->setBlack();
-                    }
-                    else
-                    {
-                        parent_ptr->setBlack();
-                    }
+                case NodeType::Direction::LEFT: // 父节点是祖父节点的左子树
+                    if (NodeType::Direction::RIGHT == new_node->direction()) rotateLeft(parent_ptr); // 如果当前节点是父节点的右子树, 左旋以父节点为根的子树, 即 parent_ptr
+                    swapColor(grandparent_ptr, grandparent_ptr->left()); // 交换前 grandparent_ptr 必为黑色, grandparent_ptr->left() 必为红色
                     rotateRight(grandparent_ptr);
-                    grandparent_ptr->setRed();
-                }
-                // 父节点是祖父节点的右子树
-                else if (rbTreeNode::Direction::RIGHT == parent_dire)
-                {
-                    // 如果当前节点是父节点的右子树
-                    // 左旋以父节点为根的子树, 即 parent_ptr
-                    if (rbTreeNode::Direction::LEFT == dire)
-                    {
-                        rotateRight(parent_ptr);
-                        new_node->setBlack();
-                    }
-                    else
-                    {
-                        parent_ptr->setBlack();
-                    }
+                    break;
+                case NodeType::Direction::RIGHT: // 父节点是祖父节点的右子树
+                    if (NodeType::Direction::LEFT == new_node->direction()) rotateRight(parent_ptr); // 如果当前节点是父节点的左子树, 右旋以父节点为根的子树, 即 parent_ptr
+                    swapColor(grandparent_ptr, grandparent_ptr->right()); // 交换前 grandparent_ptr 必为黑色, grandparent_ptr->left() 必为红色
                     rotateLeft(grandparent_ptr);
-                    grandparent_ptr->setRed();
-                }
-                else
-                {
+                    break;
+                default:
                     // 父节点为根节点且其为红色
                     // 违反红黑树定义
                     throw rbTreeException("Error in rbTree::insertNode: parent_dire can't be root (001)");
+                    break;
                 }
+
+                // 调整过后, 子树根节点为黑色
                 // 跳出循环
                 break;
             }
@@ -193,7 +172,7 @@ public:
         }
     }
 
-    void removeNode(int value)
+    void removeNode(T value)
     {
         NodeType* delete_ptr = m_root;
         while (delete_ptr)
@@ -261,7 +240,7 @@ public:
     bool checkSortTree()
     {
         std::queue<NodeType*> bfs;
-        if(nullptr != m_root) bfs.push(m_root);
+        if (nullptr != m_root) bfs.push(m_root);
         while (!bfs.empty())
         {
             NodeType* this_root = bfs.front();
@@ -346,10 +325,10 @@ private:
         assert(nullptr == node->left() && nullptr == node->right());
         switch (node->direction())
         {
-        case rbTreeNode::Direction::LEFT:
+        case NodeType::Direction::LEFT:
             node->parent()->left() = nullptr;
             break;
-        case rbTreeNode::Direction::RIGHT:
+        case NodeType::Direction::RIGHT:
             node->parent()->right() = nullptr;
             break;
         default:
@@ -366,17 +345,17 @@ private:
     {
         assert(nullptr == node->left() && nullptr == node->right());
 
-        rbTreeNode::Direction node_dire = node->direction();
+        typename NodeType::Direction node_dire = node->direction();
         switch (node_dire)
         {
-        case rbTreeNode::Direction::LEFT: {
+        case NodeType::Direction::LEFT: {
             node = node->parent();
             delete node->left();
             nodeCount--;
             node->left() = nullptr;
             break;
         }
-        case rbTreeNode::Direction::RIGHT: {
+        case NodeType::Direction::RIGHT: {
             node = node->parent();
             delete node->right();
             nodeCount--;
@@ -390,18 +369,18 @@ private:
             return;
         }
         }
-        
+
         // 调整
         bool modify_flag = true;
         do
         {
             switch (node_dire)
             {
-            case rbTreeNode::Direction::LEFT: {
+            case NodeType::Direction::LEFT: {
                 modify_flag = onLeftChildDualBlack(node);
                 break;
             }
-            case rbTreeNode::Direction::RIGHT: {
+            case NodeType::Direction::RIGHT: {
                 modify_flag = onRightChildDualBlack(node);
                 break;
             }
@@ -509,8 +488,7 @@ private:
         NodeType* new_root = subtree->right();
         assert(nullptr != new_root);
 
-        NodeType::Direction subtree_dire = subtree->direction();
-        switch (subtree_dire)
+        switch (subtree->direction())
         {
         case NodeType::Direction::LEFT:
             subtree->parent()->left() = new_root;
@@ -546,8 +524,7 @@ private:
         NodeType* new_root = subtree->left();
         assert(nullptr != new_root);
 
-        NodeType::Direction subtree_dire = subtree->direction();
-        switch (subtree_dire)
+        switch (subtree->direction())
         {
         case NodeType::Direction::LEFT:
             subtree->parent()->left() = new_root;

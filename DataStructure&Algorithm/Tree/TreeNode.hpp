@@ -64,6 +64,7 @@ public:
     ~AVLNode() {}
 };
 
+template<typename T>
 class rbTreeNode {
 public:
     enum Direction { LEFT = -1, ROOT = 0, RIGHT = 1 };
@@ -72,12 +73,12 @@ private:
     rbTreeNode* m_parent;
     rbTreeNode* m_left;
     rbTreeNode* m_right;
-    int m_value;
+    T m_value;
     int m_count;
     rbTreeNodeColor m_color;
     
 public:
-    rbTreeNode(int v) :
+    rbTreeNode(T v) :
         m_parent(nullptr),
         m_left(nullptr),
         m_right(nullptr),
@@ -89,7 +90,7 @@ public:
     inline rbTreeNode*& parent() { return m_parent; }
     inline rbTreeNode*& left() { return m_left; }
     inline rbTreeNode*& right() { return m_right; }
-    inline int& value() { return m_value; }
+    inline T& value() { return m_value; }
     inline int& count() { return m_count; }
     inline rbTreeNodeColor& color() { return m_color; }
 

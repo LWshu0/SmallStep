@@ -13,7 +13,7 @@ int main()
     std::vector<int> v;
     for (int i = 0;i < insertCount;i++) v.push_back(rand() % valueMax);
 
-    rbTree bst;
+    rbTree<int> bst;
     rbTreeView treeview;
     
     for (int i = 0;i < insertCount;i++)
